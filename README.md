@@ -1,66 +1,33 @@
+#### Creating a ERC20 Token 'HIMAL(HIM)' using Foundry and OpenZepplin
+
 ## Foundry
 
 **Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
 
-Foundry consists of:
-
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
-
 ## Documentation
 
-https://book.getfoundry.sh/
+**Created an ERC20 token HIMAL(HIM) using OpenZepplins ERC20 contract. This contract contains the follwoing features:**
+ 
+ 1. Create a HIMAL(HIM) ERC20 token with desired initial supply.
+ 2. Proivde **(HIM)** tokens as block reward to miners.
+ 3. Has Custom Token Burning Feature.
+ 4. Can trasnfer **HIM** tokens from one address to another addres with certain minimum amount limit.
 
-## Usage
+### Testing Coverage- 100%
+![image](/Images/image.png)
 
-### Build
+## Testing Documentation
+*Used addressed provided by Anvil. If this contract is to be deployed to a live network or a testnet, use addresses accordingly*
+**Before beginning testing, start an live anvil chain on one terminal and begin testing from another terminal**
 
-```shell
-$ forge build
-```
+Tested for the following things:
+1. Whether the sender and receiver address are correct or not.
+2. The transaction reverts if minimun transaction amount is not sent.
+3. Check balance of both sender and receiver after a transaction.
+4. Checking Burning Functionality.
+5. Checking Revert token Burning if address has less than burn amount.
+6. If miners are rewarded or not.
 
-### Test
 
-```shell
-$ forge test
-```
+More Functionality can be added in future.
 
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
