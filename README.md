@@ -17,7 +17,7 @@
 ![image](/Images/image.png)
 
 ## Testing Documentation
-*Used addressed provided by Anvil. If this contract is to be deployed to a live network or a testnet, use addresses accordingly*
+*Used addressed provided by Anvil. If this contract is to be deployed to a live network or a testnet, use addresses accordingly.*
 **Before beginning testing, start an live anvil chain on one terminal and begin testing from another terminal**
 
 Tested for the following things:
