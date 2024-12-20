@@ -5,11 +5,12 @@ pragma solidity ^0.8.20;
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {console} from "forge-std/Test.sol";
+import {Stake} from "./Stake.sol";
 
 contract CustomToken is ERC20, Ownable {
     /**Errors*/
     //error NotEnoughHIMSent();
-    error InvalidStakingAddress();
+    error InvalidStakingAddress(address, address);
 
     constructor(
         uint256 initialSupply
@@ -60,12 +61,21 @@ contract CustomToken is ERC20, Ownable {
 
     modifier onlyStakingContract() {
         if (msg.sender != stakingContract) {
-            revert InvalidStakingAddress();
+            revert InvalidStakingAddress(msg.sender, stakingContract);
         }
         _;
     }
 
-    function setStakingContract(address _stakingContract) external onlyOwner {
+    // // modifier to ensure only the Token Address and Staking Address can access
+    // modifier onlyOwnerOrStaking() {
+    //     require(
+    //         msg.sender == owner() || msg.sender == address(stakingContract),
+    //         "Not owner or staking contract"
+    //     );
+    //     _;
+    // }
+
+    function setStakingContract(address _stakingContract) external {
         stakingContract = _stakingContract;
     }
 
