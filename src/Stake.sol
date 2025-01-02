@@ -28,7 +28,7 @@ contract Stake {
     uint256 private constant MINIMUM_STAKING_TIME = 1 days;
 
     //events declearation
-    event Staked(uint amountstake, uint time);
+    event Staked(uint indexed amountstake, uint time);
     event unStaked(uint amountunstake, uint time, uint rewards);
     event claimReward(uint time, uint rewards);
 
@@ -48,7 +48,7 @@ contract Stake {
     /// unstaking feature///
     ////////////////////////
 
-    //check if the adress requesting the unsaking feature has staked first and foremost
+    //check if the adress requesting the unstaking feature has staked first and foremost
     function checkUnsatkingAddress(
         address checking_address
     ) public view returns (bool) {
@@ -65,6 +65,7 @@ contract Stake {
         uint256 arraylength = staked_addresses.length;
         for (uint i = 0; i < arraylength; i++) {
             if (staked_addresses[i] == _account) {
+                delete stakingTime[staked_addresses[i]];
                 staked_addresses[i] = staked_addresses[arraylength - 1]; // move the last account to _account's index
                 staked_addresses.pop();
                 break;
@@ -113,7 +114,7 @@ contract Stake {
         if (time_difference >= MINIMUM_STAKING_TIME) {
             return (true, time_difference);
         } else {
-            return (false, time_difference);
+            revert NotEnoughTimeStaked();
         }
     }
 
