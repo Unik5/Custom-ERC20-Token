@@ -32,9 +32,14 @@ contract CustomToken is ERC20, Ownable {
         _mint(miner, 2 * 10 ** decimals()); //1 HIM to miners address
     }
 
-    //for testing
+    //for testing//
+    ///////////////
     function mint(address to, uint256 amount) public {
         _mint(to, amount); // Public mint function for testing
+    }
+
+    function getBalance(address checkBalance) public view returns (uint256) {
+        return (balanceOf(checkBalance));
     }
 
     //Buring tokens

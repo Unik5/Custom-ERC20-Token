@@ -49,6 +49,7 @@ contract TokenTest is Test {
         vm.prank(alice);
         uint256 amount = 2 * 10 ** token.decimals();
         vm.expectRevert("Not enough HIM sent");
+        /* solhint-disable-next-line no-unused-vars */
         (address sender, address receiver) = token.minTransfer(
             alice,
             bob,
@@ -58,6 +59,7 @@ contract TokenTest is Test {
 
     function testCheckBalancesAfterTransfer() public {
         vm.prank(alice);
+        /* solhint-disable-next-line no-unused-vars */
         (address sender, address receiver) = token.minTransfer(
             alice,
             bob,
@@ -79,7 +81,7 @@ contract TokenTest is Test {
         vm.stopPrank();
     }
 
-    //testing if the burning reverts if not enough HIm is avaialble
+    //testing if the burning reverts if not enough HIM is avaialble
     function testRevertBurn() public {
         vm.startPrank(testforBurn);
         vm.expectRevert("Not enough tokens to burn");
@@ -109,21 +111,23 @@ contract TokenTest is Test {
     //testing staking function///
     /////////////////////////////
 
+    /*Stake Function*/
+
     //test if the staking operation reverts if not enough HIM tokens are sent
     function testMinimumStakeAmount() public {
         vm.expectRevert(Stake.NotEnoughHIMSentForStaking.selector);
         stake.stake(5 * 10 ** 18, alice);
     }
 
-    //testing is wrapper.burn is called and tokens are burned or not
+    //testing if wrapper.burn is called and tokens are burned or not
     function testWrapperBurnCall() public {
         vm.startPrank(address(stake));
-        uint256 initialBalance = alice.balance;
+        uint256 initialBalance = token.getBalance(alice);
         uint256 stakedAmount = 11 * 10 ** 18;
         stake.stake(stakedAmount, alice);
-        uint256 afterStakeAmount = alice.balance;
+        uint256 afterStakeAmount = token.getBalance(alice);
         vm.stopPrank();
-        console.log(alice.balance);
+        console.log(token.getBalance(alice));
         assertEq(initialBalance, stakedAmount + afterStakeAmount);
     }
 
@@ -153,5 +157,64 @@ contract TokenTest is Test {
         uint256 returnedTime = stake.stakingTime(alice);
         vm.stopPrank();
         assertEq(returnedTime, block.timestamp);
+    }
+
+    //testing for emit function
+    function testEmits() public {
+        vm.startPrank(address(stake));
+        vm.expectEmit(true, false, false, true);
+        emit Stake.Staked(15 * 10 ** 18, 1);
+        stake.stake(15 * 10 ** 18, alice);
+        vm.stopPrank();
+    }
+
+    /*CheckUnstakingAddress Function*/
+    function testValidityOfCheckUnstakingAddressFunction() public {
+        vm.startPrank(address(stake));
+        stake.stake(15 * 10 ** 18, alice);
+        //Checking With Correct Staked Address
+        bool returned_Value_1 = stake.checkUnsatkingAddress(alice);
+        assertEq(true, returned_Value_1);
+        //Checking With Incorrect Staked Address
+        bool returned_Value_2 = stake.checkUnsatkingAddress(bob);
+        assertEq(false, returned_Value_2);
+        vm.stopPrank();
+    }
+
+    /*Unstake Funtion*/
+    //checking reverts if validity = false
+    function testInvalidUnstakingAddressRevert() public {
+        vm.startPrank(address(stake));
+        stake.stake(15 * 10 ** 18, alice);
+        vm.warp(block.timestamp + 2 days);
+        vm.expectRevert(Stake.InvalidUnstakingAddress.selector);
+        stake.unstake(bob);
+        vm.stopPrank();
+    }
+
+    //checking reverts if staking time validity = false
+    function testIfStakingTimeIsLessThanMinimumRevert() public {
+        vm.startPrank(address(stake));
+        stake.stake(15 * 10 ** 18, alice);
+        vm.expectRevert(Stake.NotEnoughTimeStaked.selector);
+        stake.unstake(alice);
+        vm.stopPrank();
+    }
+
+    //testing if unstake is sucessfully running
+    function testCalculateRewards() public {
+        vm.startPrank(address(stake));
+        uint256 stakeAmount = 15 * 10 ** 18;
+        uint256 initialBalanceOfAlice = token.getBalance(alice);
+        stake.stake(stakeAmount, alice);
+        vm.warp(block.timestamp + 2 days);
+        uint256 timeStaked = block.timestamp - stake.stakingTime(alice);
+        uint256 calculatedRewards = stake.calculateRewards(alice, timeStaked);
+        stake.unstake(alice);
+        assertEq(
+            calculatedRewards,
+            token.getBalance(alice) - initialBalanceOfAlice
+        );
+        vm.stopPrank();
     }
 }
