@@ -15,7 +15,7 @@
  5. Staking Feature with 1 day minimum staking time.
 
 ### Testing Coverage
-![image](/Images/Screenshot from 2025-01-02 19-29-51.png)
+![image](./Images/Screenshot from 2025-01-02 19-29-51.png)
 
 ## Testing Documentation
 *Used addressed provided by Anvil. If this contract is to be deployed to a live network or a testnet, use addresses accordingly.*
